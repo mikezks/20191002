@@ -122,4 +122,8 @@ export class FlightSearchComponent implements OnInit {
         }
       );
   }
+
+  throwError(): void {
+    throw new Error("Demo for custom error handler!");
+  }
 }
