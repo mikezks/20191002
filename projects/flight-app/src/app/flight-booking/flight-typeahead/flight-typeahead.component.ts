@@ -87,6 +87,6 @@ export class FlightTypeaheadComponent implements OnInit, OnDestroy {
   }
   
   ngOnDestroy(): void {
-    this.timerSubscription.unsubscribe();
+    //this.timerSubscription.unsubscribe();
   }
 }

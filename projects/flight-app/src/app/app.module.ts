@@ -15,11 +15,13 @@ import { NavbarComponent } from "./navbar/navbar.component";
 import { SharedModule } from "./shared/shared.module";
 import { SidebarComponent } from "./sidebar/sidebar.component";
 import { StoreModule } from '@ngrx/store';
-import { reducers, metaReducers } from './+state';
+import { reducers, metaReducers, CustomSerializer } from './+state';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { EffectsModule } from "@ngrx/effects";
 import { AppEffects } from "./+state/effects/app.effects";
+import { StoreRouterConnectingModule, RouterStateSerializer, RouterState } from '@ngrx/router-store';
+import { CustomErrorHandlerService } from "./shared/ccc/custom-error-handler.service";
 
 @NgModule({
   imports: [
@@ -38,9 +40,15 @@ import { AppEffects } from "./+state/effects/app.effects";
       runtimeChecks: {
         strictStateImmutability: true,
         strictActionImmutability: true,
+        strictStateSerializability: true,
+        strictActionSerializability: true
       }
     }),
     EffectsModule.forRoot([ AppEffects ]),
+    StoreRouterConnectingModule.forRoot({
+      stateKey: 'router',
+      routerState: RouterState.Minimal
+    }),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
   ],
   declarations: [
@@ -50,7 +58,9 @@ import { AppEffects } from "./+state/effects/app.effects";
     HomeComponent,
     BasketComponent
   ],
-  providers: [],
+  providers: [
+    { provide: RouterStateSerializer, useClass: CustomSerializer }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

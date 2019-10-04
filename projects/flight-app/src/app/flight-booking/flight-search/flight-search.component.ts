@@ -70,7 +70,7 @@ export class FlightSearchComponent implements OnInit {
           const newFlight = { ...flight, date: newDate.toISOString() };
 
           this.store.dispatch(
-            fromFlightBooking.flightsUpdate({ flight: new})
+            fromFlightBooking.flightsUpdate({ flight: newFlight })
           );
         }
       )
