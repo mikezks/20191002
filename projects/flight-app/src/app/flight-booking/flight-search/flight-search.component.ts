@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FlightService, Flight} from '@flight-workspace/flight-api';
+import {Flight} from '@flight-workspace/flight-api';
 import * as fromFlightBooking from '../+state';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -35,7 +35,9 @@ export class FlightSearchComponent implements OnInit {
   ngOnInit() {
     this.flights$ =
       this.store.pipe(
-        select(state => state.flightBooking.flights)
+        //select(state => state.flightBooking.flights),
+        //select(fromFlightBooking.getFlights }),
+        select(fromFlightBooking.getFlightsWithProps, { blacklist: [3] })
       );
   }
 
