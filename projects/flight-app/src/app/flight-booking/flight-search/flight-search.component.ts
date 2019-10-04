@@ -29,7 +29,6 @@ export class FlightSearchComponent implements OnInit {
   };
 
   constructor(
-    private flightService: FlightService,
     private store: Store<fromFlightBooking.FeatureState>) {
   }
 
@@ -41,18 +40,22 @@ export class FlightSearchComponent implements OnInit {
   }
 
   search(): void {
-    if (!this.from || !this.to) return;
+    //if (!this.from || !this.to) return;
 
     /* this.flightService
       .load(this.from, this.to, this.urgent); */
 
-    this.flightService
+    /* this.flightService
       .find(this.from, this.to)
       .subscribe(
         flights => this.store.dispatch(
           fromFlightBooking.flightsLoaded({ flights })
         )
-      )
+      ); */
+
+      this.store.dispatch(
+        fromFlightBooking.flightsLoad({ from: this.from, to: this.to })
+      );
   }
 
   delay(): void {

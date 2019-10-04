@@ -21,7 +21,6 @@ import { environment } from '../environments/environment';
 import { EffectsModule } from "@ngrx/effects";
 import { AppEffects } from "./+state/effects/app.effects";
 import { StoreRouterConnectingModule, RouterStateSerializer, RouterState } from '@ngrx/router-store';
-import { CustomErrorHandlerService } from "./shared/ccc/custom-error-handler.service";
 
 @NgModule({
   imports: [
