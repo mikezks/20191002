@@ -7,10 +7,12 @@ export const flightBookingFeatureKey = 'flightBooking';
 
 export interface State {
   flights: Flight[];
+  filter: { from: string, to: string }
 }
 
 export const initialState: State = {
-  flights: []
+  flights: [],
+  filter: { from: 'Graz', to: 'Hamburg' }
 };
 
 export interface FeatureState extends RootState {
@@ -21,7 +23,16 @@ const flightBookingReducer = createReducer(
   initialState,
 
   on(FlightBookingActions.flightsLoaded, (state, action) => {
-    const flights = action.flights;
+    // Cache Flights and replace with new items
+    const flights = [
+      ...state.flights.filter(f =>
+        !action.flights[0] || (
+          f.from !== action.flights[0].from &&
+          f.to !== action.flights[0].to
+        )
+      ),
+      ...action.flights
+    ];
     return { ...state, flights };
   }),
 
@@ -29,6 +40,10 @@ const flightBookingReducer = createReducer(
     const flight = action.flight;
     const flights = state.flights.map(f => f.id === flight.id ? flight : f);
     return { ...state, flights };
+  }),
+
+  on(FlightBookingActions.flightsFilter, (state, action) => {
+    return { ...state, filter: { from: action.from, to: action.to } };
   }),
 
 );

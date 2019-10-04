@@ -3,7 +3,8 @@ import {Flight} from '@flight-workspace/flight-api';
 import * as fromFlightBooking from '../+state';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { first, startWith } from 'rxjs/operators';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 
 @Component({
@@ -13,10 +14,12 @@ import { first } from 'rxjs/operators';
 })
 export class FlightSearchComponent implements OnInit {
 
-  from: string = 'Hamburg'; // in Germany
+  /* from: string = 'Hamburg'; // in Germany
   to: string = 'Graz'; // in Austria
-  urgent: boolean = false;
+  urgent: boolean = false; */
+  filterForm: FormGroup;
   flights$: Observable<Flight[]>;
+  filter$: Observable<{ from: string, to: string}>;
 
 /*   get flights() {
     return this.flightService.flights;
@@ -29,15 +32,52 @@ export class FlightSearchComponent implements OnInit {
   };
 
   constructor(
-    private store: Store<fromFlightBooking.FeatureState>) {
+    private store: Store<fromFlightBooking.FeatureState>,
+    private fb: FormBuilder) {
   }
 
   ngOnInit() {
+    // Change to RX Forms to use filter for selection from cache
+    this.filterForm = this.fb.group({
+      from: [ '', [ Validators.required ] ],
+      to: [ '', [ Validators.required ] ],
+      urgent: []
+    }, {
+    // Update filter inputs on blur
+      updateOn: 'blur'
+    });
+    
+    // Set filter values based on state initially
+    this.store
+      .pipe(
+        select(fromFlightBooking.getFilter),
+        first()
+      )
+      .subscribe(
+        filter => this.filterForm.patchValue(filter)
+      );
+
+    // Update filter inputs on blur
+    this.filterForm.valueChanges
+      .pipe(
+        startWith(this.filterForm.value)
+      )
+      .subscribe(
+        filter => this.store.dispatch(
+          fromFlightBooking.flightsFilter({
+            from: filter.from,
+            to: filter.to
+          })
+        )
+      );
+
+    // Select Flights from filtered state cache
     this.flights$ =
       this.store.pipe(
         //select(state => state.flightBooking.flights),
         //select(fromFlightBooking.getFlights }),
-        select(fromFlightBooking.getFlightsWithProps, { blacklist: [3] })
+        //select(fromFlightBooking.getFlightsWithProps, { blacklist: [3] }),
+        select(fromFlightBooking.getFilterByActiveFilter)
       );
   }
 
@@ -55,9 +95,11 @@ export class FlightSearchComponent implements OnInit {
         )
       ); */
 
-      this.store.dispatch(
-        fromFlightBooking.flightsLoad({ from: this.from, to: this.to })
-      );
+    this.store.dispatch(
+      fromFlightBooking.flightsLoad({
+        ...this.filterForm.value
+      })
+    );
   }
 
   delay(): void {
@@ -78,7 +120,6 @@ export class FlightSearchComponent implements OnInit {
             fromFlightBooking.flightsUpdate({ flight: newFlight })
           );
         }
-      )
+      );
   }
-
 }

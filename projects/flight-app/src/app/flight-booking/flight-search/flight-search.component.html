@@ -9,26 +9,25 @@
     </div>
     <div class="content">
 
-      <form>
+      <form [formGroup]="filterForm">
 
         <div class="form-group">
           <label>From:</label>
-          <input [(ngModel)]="from" name="from" class="form-control">
+          <input formControlName="from" class="form-control">
         </div>
         <div class="form-group">
           <label>To:</label>
-          <input [(ngModel)]="to" name="to" class="form-control">
+          <input formControlName="to" class="form-control">
         </div>
         <div class="form-group">
           <label>
-            <input [(ngModel)]="urgent" name="urgent" type="checkbox">
+            <input formControlName="urgent" type="checkbox">
             Urgent (When it's urgent it fails -- like in real life ;-))
-
           </label>
         </div>
 
         <div class="form-group">
-          <button (click)="search()" [disabled]="!from || !to"
+          <button (click)="search()" [disabled]="filterForm.invalid"
             class="btn btn-default">
             Search
           </button>

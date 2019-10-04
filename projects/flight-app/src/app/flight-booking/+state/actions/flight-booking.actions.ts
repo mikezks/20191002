@@ -15,3 +15,8 @@ export const flightsLoad = createAction(
   '[FlightBooking] Flights load',
   props<{ from: string, to: string }>()
 );
+
+export const flightsFilter = createAction(
+  '[FlightBooking] Flights Filter',
+  props<{ from: string, to: string }>()
+);
